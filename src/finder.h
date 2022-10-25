@@ -13,9 +13,10 @@ class Finder : public QObject
     Q_OBJECT
 
     struct RootPath{
-        QString root_path;
-        int recursion_level;
+        QString root_path; /*!< Path of the root folder to search in */
+        int recursion_level; /*!< Number of layers of subfolder to search */
         /*! List of regexs for folder matching.
+         *
          *  This list should either be empty, or have a size of `recursion_level`
          */
         QList<QRegularExpression> regexs;

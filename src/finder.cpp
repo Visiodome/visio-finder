@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QIODevice>
 #include <QStandardPaths>
+#include <QCoreApplication>
 
 Finder::Finder(QObject *parent)
     : QObject(parent)
@@ -53,6 +54,7 @@ bool Finder::loadJson(QString path)
     {
         m_target_folder.clear();
         m_target_folder = json_object["targetFolder"].toString();
+        replaceConstants(m_target_folder);
     }
 
     QJsonArray search_objects = json_object["searchObjects"].toArray();
@@ -267,8 +269,9 @@ QString Finder::search_target(QRegularExpression target_name,
 void Finder::replaceConstants(QString &path){
     path.replace("<AppData>", std::getenv("AppData"));
     path.replace("<AppDataLocal>", QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
-    path.replace("AppDataStartDir>", "C:/ProgramData/Microsoft/Windows/Start Menu/Programs");
+    path.replace("<AppDataStartDir>", "C:/ProgramData/Microsoft/Windows/Start Menu/Programs");
     path.replace("<ProgramFiles>", std::getenv("PROGRAMFILES"));
     path.replace("<ProgramFilesX86>", std::getenv("PROGRAMFILES(X86)"));
     path.replace("<Home>", QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    path.replace("<VisiofinderExe>", QCoreApplication::applicationDirPath());
 }
