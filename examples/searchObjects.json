@@ -1,0 +1,18 @@
+{
+    "searchObjects": [
+        {
+            "isRegex": false,
+            "targetName": "fileA.txt",
+            "rootPaths": [
+                "/home/user/documents/folderA",
+                "/home/user/documents/folderB"
+            ]
+        },
+        {
+            "targetName": "fileB.*",
+            "rootPaths": [
+                "/home/user/documents/folderA"
+            ]
+        }
+    ]
+}
