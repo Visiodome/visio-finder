@@ -12,6 +12,8 @@ class Finder : public QObject
 {
     Q_OBJECT
 
+    enum ShortcutType{SYMLINK, SCRIPT};
+
     struct RootPath{
         QString root_path; /*!< Path of the root folder to search in */
         int recursion_level; /*!< Number of layers of subfolder to search */
@@ -30,6 +32,8 @@ class Finder : public QObject
         QString link_name; /*!< Name of the shortcut */
         QString path; /*!< Path of target when found */
         int recursion_level; /*!< Recursion level for the search */
+        ShortcutType type;
+        QString custom_command;
     };
 
 private:

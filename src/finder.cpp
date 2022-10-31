@@ -104,6 +104,29 @@ bool Finder::loadJson(QString path)
         // Set link name
         current_object.link_name = search_object["linkName"].toString();
 
+        // Set shortcut type. Default to a symlink, but can be a script.
+        current_object.type = ShortcutType::SYMLINK;
+        if(search_object.contains("shortcutType")){
+            if(!search_object["shortcutType"].isString())
+                return false;
+            QString type_str = search_object["shortcutType"].toString();
+            if(type_str == "symlink")
+                current_object.type = ShortcutType::SYMLINK;
+            else if(type_str == "script")
+                current_object.type = ShortcutType::SCRIPT;
+            else
+                return false;
+
+        }
+
+        // Set custom command. Default to empty string, meaning no custom command.
+        current_object.custom_command = "";
+        if(search_object.contains("customCommand")){
+            if(!search_object["customCommand"].isString())
+                return false;
+            current_object.custom_command = search_object["customCommand"].toString();
+        }
+
         // Set root paths to search for
         QJsonArray root_paths_array = search_object["rootPaths"].toArray();
         for(const QJsonValue &root_path: root_paths_array){
@@ -214,11 +237,24 @@ void Finder::create_shortcuts()
         if(object.path.isEmpty())
             continue;
 
-        QFile::link(object.path,
-                    m_target_folder
-                        + "/"
-                        + object.link_name
-                        + ".lnk");
+        QString basename = m_target_folder
+                           + "/"
+                           + object.link_name;
+
+        switch(object.type){
+        case SYMLINK:
+            QFile::link(object.path, basename + ".lnk");
+            break;
+        case SCRIPT:
+            QFile script(basename + ".bat");
+            script.open(QIODevice::WriteOnly | QIODevice::Truncate);
+            if(object.custom_command.isEmpty())
+                script.write(object.path.replace("/", "\\").toUtf8());
+            else
+                script.write(object.custom_command.toUtf8());
+            script.close();
+            break;
+        }
     }
 }
 
