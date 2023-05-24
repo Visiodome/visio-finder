@@ -250,8 +250,10 @@ void Finder::create_shortcuts()
             script.open(QIODevice::WriteOnly | QIODevice::Truncate);
             if(object.custom_command.isEmpty())
                 script.write(object.path.replace("/", "\\").toUtf8());
-            else
+            else{
+                object.custom_command.replace("<TargetPath>", object.path);
                 script.write(object.custom_command.toUtf8());
+            }
             script.close();
             break;
         }
